@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
-import { Table, Typography, Button } from 'antd';
+import { useEffect, useState, useCallback } from 'react';
+import { Table, Input, Button, Typography, Tooltip } from 'antd';
+import { FilterOutlined } from '@ant-design/icons';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import { useProductsStore } from '@/store/productsStore';
 import { useAuthStore } from '@/store/authStore';
@@ -23,13 +24,27 @@ export const ProductsPage = () => {
     pageSize,
     fetch: fetchProducts,
     setPage,
+    setSearch,
   } = useProductsStore();
 
   const logout = useAuthStore((s) => s.logout);
+  const [searchValue, setSearchValue] = useState('');
+  const [sortResetKey, setSortResetKey] = useState(0);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  const handleSearch = useCallback(
+    (value: string) => {
+      setSearch(value);
+    },
+    [setSearch],
+  );
+
+  const resetSort = () => {
+    setSortResetKey((prev) => prev + 1);
+  };
 
   const handlePageChange = (pagination: TablePaginationConfig) => {
     if (pagination.current && pagination.current !== page) {
@@ -113,6 +128,15 @@ export const ProductsPage = () => {
           <Typography.Title level={3} className="!mb-0 shrink-0">
             Товары
           </Typography.Title>
+          <Input.Search
+            placeholder="Найти"
+            allowClear
+            size="large"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onSearch={handleSearch}
+            className="max-w-lg"
+          />
           <Button type="link" className="ml-auto" onClick={logout}>
             Выйти
           </Button>
@@ -121,9 +145,18 @@ export const ProductsPage = () => {
         <div className="bg-white rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
             <Typography.Text strong>Все позиции</Typography.Text>
+            <div className="flex items-center gap-3">
+              <Tooltip title="Сбросить сортировку">
+                <Button
+                  icon={<FilterOutlined />}
+                  onClick={resetSort}
+                />
+              </Tooltip>
+            </div>
           </div>
 
           <Table<Product>
+            key={sortResetKey}
             rowKey="id"
             columns={columns}
             dataSource={dataSource}
