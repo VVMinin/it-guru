@@ -1,12 +1,29 @@
 import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import { Input, Button, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+
+const schema = yup.object({
+  username: yup
+    .string()
+    .min(4, 'Минимум 4 символа')
+    .max(20, 'Максимум 20 символов')
+    .matches(/^[a-zA-Z0-9]*$/, 'Только латиница и цифры')
+    .required('Введите логин'),
+  password: yup
+    .string()
+    .max(16, 'Максимум 16 символов')
+    .required('Введите пароль'),
+});
 
 export const LoginPage = () => {
   const {
     control,
     handleSubmit,
+    formState: { errors },
   } = useForm({
+    resolver: yupResolver(schema),
     defaultValues: { username: '', password: '' },
   });
 
@@ -40,10 +57,14 @@ export const LoginPage = () => {
                   prefix={<UserOutlined className="text-gray-400" />}
                   allowClear
                   size="large"
+                  status={errors.username ? 'error' : undefined}
                   placeholder="Введите логин"
                 />
               )}
             />
+            {errors.username && (
+              <p className="text-red-500 text-xs mt-1">{errors.username.message}</p>
+            )}
           </div>
 
           <div className="mb-4">
@@ -58,10 +79,14 @@ export const LoginPage = () => {
                   maxLength={16}
                   prefix={<LockOutlined className="text-gray-400" />}
                   size="large"
+                  status={errors.password ? 'error' : undefined}
                   placeholder="Введите пароль"
                 />
               )}
             />
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+            )}
           </div>
 
           <Button
