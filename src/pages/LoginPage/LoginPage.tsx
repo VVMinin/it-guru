@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Input, Button, Typography } from 'antd';
+import { Input, Button, Checkbox, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import logo from '@/assets/logo.png';
 import { useAuthStore } from '@/store/authStore';
+import type { LoginFormValues } from '@/types';
 
 const schema = yup.object({
   username: yup
@@ -18,33 +20,36 @@ const schema = yup.object({
     .string()
     .max(16, 'Максимум 16 символов')
     .required('Введите пароль'),
+  remember: yup.boolean().defined(),
 });
 
 export const LoginPage = () => {
   const navigate = useNavigate();
-  const { login, isAuth } = useAuthStore();
+  const { login, loading, error, isAuth } = useAuthStore();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<LoginFormValues>({
     resolver: yupResolver(schema),
-    defaultValues: { username: '', password: '' },
+    defaultValues: { username: '', password: '', remember: false },
   });
 
   useEffect(() => {
     if (isAuth) navigate('/products', { replace: true });
   }, [isAuth, navigate]);
 
-  const onSubmit = (values: { username: string; password: string }) => {
-    login(values.username, values.password, false);
+  const onSubmit = (values: LoginFormValues) => {
+    login(values.username, values.password, values.remember);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      {loading && <div className="loadbar" />}
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm p-10">
         <div className="flex flex-col items-center mb-8">
+          <img src={logo} alt="Logo" className="w-12 h-12 mb-4" />
           <Typography.Title level={3} className="!mb-1">
             Добро пожаловать!
           </Typography.Title>
@@ -99,15 +104,42 @@ export const LoginPage = () => {
             )}
           </div>
 
+          {error && (
+            <p className="text-red-500 text-sm mb-4">{error}</p>
+          )}
+
+          <Controller
+            name="remember"
+            control={control}
+            render={({ field }) => (
+              <Checkbox
+                checked={field.value}
+                onChange={(e) => field.onChange(e.target.checked)}
+                className="mb-6"
+              >
+                Запомнить данные
+              </Checkbox>
+            )}
+          />
+
           <Button
             type="primary"
             htmlType="submit"
+            loading={loading}
             block
             size="large"
             className="!rounded-lg !h-12"
           >
             Войти
           </Button>
+
+          <div className="text-center mt-6">
+            <Typography.Text type="secondary">или</Typography.Text>
+          </div>
+          <div className="text-center mt-2">
+            <Typography.Text type="secondary">Нет аккаунта? </Typography.Text>
+            <Typography.Link>Создать</Typography.Link>
+          </div>
         </form>
       </div>
     </div>
