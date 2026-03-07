@@ -1,8 +1,11 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Input, Button, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { useAuthStore } from '@/store/authStore';
 
 const schema = yup.object({
   username: yup
@@ -18,6 +21,9 @@ const schema = yup.object({
 });
 
 export const LoginPage = () => {
+  const navigate = useNavigate();
+  const { login, isAuth } = useAuthStore();
+
   const {
     control,
     handleSubmit,
@@ -27,8 +33,12 @@ export const LoginPage = () => {
     defaultValues: { username: '', password: '' },
   });
 
+  useEffect(() => {
+    if (isAuth) navigate('/products', { replace: true });
+  }, [isAuth, navigate]);
+
   const onSubmit = (values: { username: string; password: string }) => {
-    console.log(values);
+    login(values.username, values.password, false);
   };
 
   return (
