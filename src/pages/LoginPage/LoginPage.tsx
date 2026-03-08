@@ -7,6 +7,7 @@ import { Input, Button, Checkbox, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import logo from '@/assets/logo.png';
 import { useAuthStore } from '@/store/authStore';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
 import type { LoginFormValues } from '@/types';
 
 const schema = yup.object({
@@ -46,7 +47,7 @@ export const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      {loading && <div className="loadbar" />}
+      {loading && <LoadingOverlay />}
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm p-10">
         <div className="flex flex-col items-center mb-8">
           <img src={logo} alt="Logo" className="w-12 h-12 mb-4" />

@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Table, Input, Button, Typography, Tooltip } from 'antd';
-import { PlusOutlined, ReloadOutlined, FilterOutlined } from '@ant-design/icons';
+import { PlusOutlined, ReloadOutlined, MinusOutlined, FilterOutlined } from '@ant-design/icons';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import { useProductsStore } from '@/store/productsStore';
 import { useAuthStore } from '@/store/authStore';
 import type { Product } from '@/types';
 import { AddProductModal } from '@/components/AddProductModal/AddProductModal';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
 
 const PAGE_SIZE = 20;
 
@@ -118,13 +119,29 @@ export const ProductsPage = () => {
       showSorterTooltip: { title: 'Сортировка по цене' },
       render: (price: number) => formatPrice(price),
     },
+    {
+      title: '',
+      key: 'actions',
+      width: 100,
+      render: () => (
+        <div className="flex gap-2">
+          <Button
+            type="primary"
+            shape="circle"
+            size="small"
+            icon={<PlusOutlined />}
+          />
+          <Button shape="circle" size="small" icon={<MinusOutlined />} />
+        </div>
+      ),
+    },
   ];
 
   const dataSource = [...localProducts, ...products];
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      {loading && <div className="loadbar" />}
+      {loading && <LoadingOverlay />}
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-6 mb-6">
           <Typography.Title level={3} className="!mb-0 shrink-0">
