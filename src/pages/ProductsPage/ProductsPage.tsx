@@ -1,10 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Table, Input, Button, Typography, Tooltip } from 'antd';
-import { FilterOutlined } from '@ant-design/icons';
+import { PlusOutlined, ReloadOutlined, FilterOutlined } from '@ant-design/icons';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import { useProductsStore } from '@/store/productsStore';
 import { useAuthStore } from '@/store/authStore';
 import type { Product } from '@/types';
+import { AddProductModal } from '@/components/AddProductModal/AddProductModal';
 
 const PAGE_SIZE = 20;
 
@@ -28,6 +29,7 @@ export const ProductsPage = () => {
   } = useProductsStore();
 
   const logout = useAuthStore((s) => s.logout);
+  const [modalOpen, setModalOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [sortResetKey, setSortResetKey] = useState(0);
 
@@ -152,6 +154,17 @@ export const ProductsPage = () => {
                   onClick={resetSort}
                 />
               </Tooltip>
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={() => fetchProducts()}
+              />
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => setModalOpen(true)}
+              >
+                Добавить
+              </Button>
             </div>
           </div>
 
@@ -175,6 +188,8 @@ export const ProductsPage = () => {
           />
         </div>
       </div>
+
+      <AddProductModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 };
