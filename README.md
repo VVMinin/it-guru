@@ -6,8 +6,14 @@
 
 ```bash
 git clone https://github.com/VVMinin/it-guru.git
+```
+```bash
 cd it-guru
+```
+```bash
 npm i
+```
+```bash
 npm run dev
 ```
 
