@@ -90,7 +90,6 @@ const columns: ColumnsType<Product> = [
           shape="circle"
           size="small"
           icon={<EllipsisOutlined />}
-          onClick={() => console.log('У кнопки нет функционала')}
         />
       </div>
     ),
@@ -199,7 +198,6 @@ export const ProductsPage = () => {
               loading={loading}
               onChange={(pagination) => handlePageChange(pagination)}
               rowSelection={{ type: 'checkbox' }}
-              locale={{ emptyText: <Empty description="Товары не найдены" /> }}
               pagination={{
                 current: page,
                 pageSize,
