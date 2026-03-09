@@ -1,11 +1,14 @@
 import { create } from 'zustand';
-import { getProducts, searchProducts } from '@/api/products';
-import type { Product } from '@/types';
+import { getProducts, searchProducts } from '../api/products';
+import { getErrorMessage } from '@/shared/lib/getErrorMessage';
+import { PAGE_SIZE } from '@/shared/config/constants';
+import type { Product } from '@/shared/types';
 
 interface ProductsState {
   products: Product[];
   total: number;
   loading: boolean;
+  error: string | null;
   page: number;
   pageSize: number;
   search: string;
@@ -20,14 +23,15 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
   products: [],
   total: 0,
   loading: false,
+  error: null,
   page: 1,
-  pageSize: 20,
+  pageSize: PAGE_SIZE,
   search: '',
   localProducts: [],
 
   fetch: async () => {
     const { page, pageSize, search } = get();
-    set({ loading: true });
+    set({ loading: true, error: null });
 
     try {
       const skip = (page - 1) * pageSize;
@@ -37,8 +41,8 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
         : await getProducts({ limit: pageSize, skip });
 
       set({ products: data.products, total: data.total, loading: false });
-    } catch {
-      set({ loading: false });
+    } catch (err) {
+      set({ loading: false, error: getErrorMessage(err) });
     }
   },
 

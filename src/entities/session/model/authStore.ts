@@ -1,7 +1,8 @@
 import { create } from 'zustand';
-import { login as loginApi } from '@/api/auth';
-import type { User } from '@/types';
-import axios from 'axios';
+import { login as loginApi } from '../api/auth';
+import { getErrorMessage } from '@/shared/lib/getErrorMessage';
+import { TOKEN_KEY } from '@/shared/config/constants';
+import type { User } from '@/shared/types';
 
 interface AuthState {
   user: User | null;
@@ -27,7 +28,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const { data } = await loginApi(username, password);
 
       const storage = remember ? localStorage : sessionStorage;
-      storage.setItem('accessToken', data.accessToken);
+      storage.setItem(TOKEN_KEY, data.accessToken);
 
       const user: User = {
         id: data.id,
@@ -40,24 +41,20 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       set({ user, token: data.accessToken, isAuth: true, loading: false });
     } catch (err) {
-      let message = 'Произошла ошибка';
-      if (axios.isAxiosError(err)) {
-        message = err.response?.data?.message || message;
-      }
-      set({ loading: false, error: message });
+      set({ loading: false, error: getErrorMessage(err) });
     }
   },
 
   logout: () => {
-    localStorage.removeItem('accessToken');
-    sessionStorage.removeItem('accessToken');
+    localStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
     set({ user: null, token: null, isAuth: false });
   },
 
   checkAuth: () => {
     const token =
-      sessionStorage.getItem('accessToken') ||
-      localStorage.getItem('accessToken');
+      sessionStorage.getItem(TOKEN_KEY) ||
+      localStorage.getItem(TOKEN_KEY);
 
     if (token) {
       set({ token, isAuth: true });

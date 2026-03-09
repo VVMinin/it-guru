@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { ConfigProvider } from 'antd';
-import { useAuthStore } from '@/store/authStore';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { LoginPage } from '@/pages/LoginPage/LoginPage';
-import { ProductsPage } from '@/pages/ProductsPage/ProductsPage';
+import { useAuthStore } from '@/entities/session';
+import { THEME_COLOR } from '@/shared/config/constants';
+import { ProtectedRoute } from '@/shared/ui/ProtectedRoute';
+import { LoginPage } from '@/pages/login';
+import { ProductsPage } from '@/pages/products';
 
 export const App = () => {
   const checkAuth = useAuthStore((s) => s.checkAuth);
@@ -14,7 +15,7 @@ export const App = () => {
   }, [checkAuth]);
 
   return (
-    <ConfigProvider theme={{ token: { colorPrimary: '#242EDB' } }}>
+    <ConfigProvider theme={{ token: { colorPrimary: THEME_COLOR } }}>
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />

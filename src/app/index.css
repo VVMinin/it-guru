@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+.ant-pagination {
+  display: flex;
+  align-items: center;
+}
+
+.ant-pagination .ant-pagination-total-text {
+  margin-right: auto;
+}
+
+.ant-pagination .ant-pagination-item-active {
+  background-color: #242EDB !important;
+  border-color: #242EDB !important;
+}
+
+.ant-pagination .ant-pagination-item-active a {
+  color: #fff !important;
+}

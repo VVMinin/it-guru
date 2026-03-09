@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Progress } from 'antd';
+import { THEME_COLOR, PROGRESS_SIZE } from '@/shared/config/constants';
 
 export const LoadingOverlay = () => {
   const [percent, setPercent] = useState(0);
@@ -21,8 +22,8 @@ export const LoadingOverlay = () => {
       <Progress
         type="circle"
         percent={percent}
-        strokeColor="#242EDB"
-        size={80}
+        strokeColor={THEME_COLOR}
+        size={PROGRESS_SIZE}
         format={(p) => `${p}%`}
       />
     </div>
